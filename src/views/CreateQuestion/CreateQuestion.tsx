@@ -1,10 +1,15 @@
 import React from "react";
 import QuizEditor from "../../components/Quiz/CreateQuiz";
+import { QuestionsProvider } from "../../store";
 
-export default function CreateQuestion() {
+const CreateQuestion = () => {
   return (
     <div>
-      <QuizEditor />
+      <QuestionsProvider>
+        <QuizEditor />
+      </QuestionsProvider>
     </div>
   );
-}
+};
+
+export default CreateQuestion;
