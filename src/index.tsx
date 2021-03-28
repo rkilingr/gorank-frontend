@@ -3,10 +3,11 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "rsuite/dist/styles/rsuite-dark.css";
+import { ColorModeScript } from "@chakra-ui/react";
 
 ReactDOM.render(
   <React.StrictMode>
+    <ColorModeScript />
     <App />
   </React.StrictMode>,
   document.getElementById("root")

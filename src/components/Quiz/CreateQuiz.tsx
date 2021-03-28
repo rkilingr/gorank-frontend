@@ -1,41 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
+import { useQuestionsContext, addQuestion, Question } from "../../store";
 import QuestionEditor from "./CreateQuestion";
-import {
-  Form,
-  IconButton,
-  Icon,
-  ButtonToolbar,
-  Alert,
-  PanelGroup,
-  Panel,
-} from "rsuite";
+import { Form, IconButton, Icon, Alert } from "@chakra-ui/react";
 
-export default function QuizEditor() {
-  const [state, setState] = useState<{ questions: React.ReactNode[] }>({
-    questions: [],
-  });
-
-  const addQuestion = () => {
-    let questions = state.questions;
-
-    const index = state.questions.length;
-
-    questions = questions.concat(<QuestionEditor key={index} />);
-
-    setState({ questions });
-  };
+const QuizEditor = () => {
+  const [questionsCtx, setQuestions] = useQuestionsContext();
 
   return (
     <Form>
       <PanelGroup accordion defaultActiveKey={1} bordered>
-        {state.questions.map((prop: React.ReactNode, key: number) => {
+        {questionsCtx.map((questionVal: Question, key: number) => {
           return (
-            <Panel
-              key={key}
-              header={"Question " + `${key + 1}`}
-              eventKey={key + 1}
-            >
-              {prop}
+            <Panel key={key} header={questionVal.title} eventKey={key + 1}>
+              <QuestionEditor question={questionVal} />
             </Panel>
           );
         })}
@@ -44,23 +21,25 @@ export default function QuizEditor() {
       <ButtonToolbar>
         <IconButton
           icon={<Icon icon="plus-square" />}
-          appearance="primary"
-          onClick={addQuestion}
+          aria-label="Add Question"
+          onClick={() => {
+            setQuestions((q1) => addQuestion(q1));
+          }}
           active
         >
-          Add Question
+          Add
         </IconButton>
         <IconButton
+          aria-label="Save Button"
           icon={<Icon icon="save" />}
-          appearance="primary"
           onClick={() => Alert.success("Quiz Saved")}
           active
         >
           Submit
         </IconButton>
         <IconButton
+          aria-label="Cancel Button"
           icon={<Icon icon="ban" />}
-          appearance="primary"
           color="red"
           active
         >
@@ -69,4 +48,6 @@ export default function QuizEditor() {
       </ButtonToolbar>
     </Form>
   );
-}
+};
+
+export default QuizEditor;
