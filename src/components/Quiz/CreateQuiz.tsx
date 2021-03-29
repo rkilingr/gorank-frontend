@@ -1,22 +1,14 @@
 import React from "react";
 import { useQuestionsContext, addQuestion, Question } from "../../store";
 import QuestionEditor from "./CreateQuestion";
-import {
-  Form,
-  IconButton,
-  Icon,
-  ButtonToolbar,
-  Alert,
-  PanelGroup,
-  Panel,
-} from "rsuite";
+import { Form, Icon } from "semantic-ui-react";
 
 const QuizEditor = () => {
   const [questionsCtx, setQuestions] = useQuestionsContext();
 
   return (
     <Form>
-      <PanelGroup accordion defaultActiveKey={1} bordered>
+      {/* <PanelGroup accordion defaultActiveKey={1} bordered>
         {questionsCtx.map((questionVal: Question, key: number) => {
           return (
             <Panel key={key} header={questionVal.title} eventKey={key + 1}>
@@ -53,7 +45,7 @@ const QuizEditor = () => {
         >
           Cancel
         </IconButton>
-      </ButtonToolbar>
+      </ButtonToolbar> */}
     </Form>
   );
 };

@@ -2,16 +2,7 @@ import React from "react";
 import { Switch, Route, Link } from "react-router-dom";
 import routes from "../../routes";
 import HomeView from "../../views/Home/Home";
-import {
-  Navbar,
-  Nav,
-  Icon,
-  Container,
-  Header,
-  Sidebar,
-  Content,
-  Footer,
-} from "rsuite";
+import { Icon, Container, Header, Sidebar } from "semantic-ui-react";
 
 const switchRoutes = (
   <Switch>
@@ -33,7 +24,7 @@ const switchRoutes = (
 export default function Home() {
   return (
     <div>
-      <Container>
+      {/* <Container>
         <Header>
           <Navbar>
             <Navbar.Body>
@@ -68,7 +59,7 @@ export default function Home() {
         <Footer style={{ textAlign: "center" }}>
           <h6>gorank</h6>
         </Footer>
-      </Container>
+      </Container> */}
     </div>
   );
 }

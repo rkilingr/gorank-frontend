@@ -6,19 +6,7 @@ import {
   removeQuestion,
   useQuestionsContext,
 } from "../../store";
-import {
-  FormControl,
-  FormGroup,
-  ControlLabel,
-  HelpBlock,
-  Panel,
-  Row,
-  Col,
-  InputGroup,
-  Input,
-  IconButton,
-  Icon,
-} from "rsuite";
+import { FormGroup, Input, Icon } from "semantic-ui-react";
 
 interface props {
   question: Question;
@@ -29,7 +17,7 @@ const QuestionEditor: React.FC<props> = (q: props) => {
   const choices = Object.keys(q.question.choices);
   return (
     <div>
-      <FormGroup>
+      {/* <FormGroup>
         <ControlLabel>Question Title</ControlLabel>
         <FormControl
           name="name"
@@ -188,7 +176,7 @@ const QuestionEditor: React.FC<props> = (q: props) => {
           };
           void f();
         }}
-      />
+      /> */}
     </div>
   );
 };

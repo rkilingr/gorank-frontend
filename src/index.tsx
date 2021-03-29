@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import "rsuite/dist/styles/rsuite-dark.css";
+import "semantic-ui-css/semantic.css";
 
 ReactDOM.render(
   <React.StrictMode>
