@@ -3,13 +3,18 @@
 
 import { createMedia } from "@artsy/fresnel";
 import React, { useState } from "react";
-// import { Switch, Route } from "react-router-dom";
-// import routes from "../../routes";
-// import HomeView from "../../views/Home/Home";
+import { Switch, Route, Link } from "react-router-dom";
+import routes from "../../routes";
+import HomeView from "../../views/Home/Home";
+import {
+  LoginProvider,
+  useLoginContext,
+  SetLoginType,
+  LoginInfo,
+} from "../../store";
 import {
   Button,
   Container,
-  Divider,
   Grid,
   Header,
   Icon,
@@ -21,22 +26,22 @@ import {
   Placeholder,
 } from "semantic-ui-react";
 
-// const switchRoutes = (
-//   <Switch>
-//     {routes.map((prop, key) => {
-//       if (prop.layout + prop.path === "/") {
-//         return <HomeView key={1} />;
-//       }
-//       return (
-//         <Route
-//           path={prop.layout + prop.path}
-//           component={prop.component}
-//           key={key}
-//         />
-//       );
-//     })}
-//   </Switch>
-// );
+const switchRoutes = (
+  <Switch>
+    {routes.map((prop, key) => {
+      if (prop.layout + prop.path === "/") {
+        return <HomeView key={1} />;
+      }
+      return (
+        <Route
+          path={prop.layout + prop.path}
+          component={prop.component}
+          key={key}
+        />
+      );
+    })}
+  </Switch>
+);
 
 const { MediaContextProvider, Media } = createMedia({
   breakpoints: {
@@ -134,16 +139,47 @@ const Footer = () => (
   </Segment>
 );
 
-/* Heads up!
- * Neither Semantic UI nor Semantic UI React offer a responsive navbar, however, it can be implemented easily.
- * It can be more complicated, but you can create really flexible markup.
- */
+const menuItemsObj: { [name: string]: string } = { Home: "/", About: "/about" };
+
+interface menuProps {
+  items: typeof menuItemsObj;
+  active: number;
+}
+
+const MenuItems: React.FC<menuProps> = (props: menuProps) => {
+  return (
+    <>
+      {Object.keys(props.items).map((val, index) => {
+        return (
+          <Link key={index} to={props.items[val]}>
+            {index === props.active ? (
+              <Menu.Item as="a" active>
+                {val}
+              </Menu.Item>
+            ) : (
+              <Menu.Item as="a">{val}</Menu.Item>
+            )}
+          </Link>
+        );
+      })}
+    </>
+  );
+};
+
 interface ContainerProps {
   children: React.ReactElement[];
 }
 
-export const DesktopContainer: React.FC<ContainerProps> = (ContainerProps) => {
-  const [state, setState] = useState({ fixed: true });
+interface DeviceContainerProps {
+  children: React.ReactElement[];
+  setLogin: SetLoginType;
+  loginInfo: LoginInfo;
+}
+
+export const DesktopContainer: React.FC<DeviceContainerProps> = (
+  ContainerProps
+) => {
+  const [state, setState] = useState({ fixed: false });
 
   const hideFixedMenu = () => setState({ fixed: false });
   const showFixedMenu = () => setState({ fixed: true });
@@ -166,27 +202,43 @@ export const DesktopContainer: React.FC<ContainerProps> = (ContainerProps) => {
             size="large"
           >
             <Container>
-              <Menu.Item as="a" active>
-                Home
-              </Menu.Item>
-              <Menu.Item as="a">Work</Menu.Item>
-              <Menu.Item as="a">Company</Menu.Item>
-              <Menu.Item as="a">Careers</Menu.Item>
+              <MenuItems items={menuItemsObj} active={0} />
               <Menu.Item position="right">
-                <Button as="a" inverted={!fixed}>
-                  Log in
-                </Button>
-                <Button
-                  as="a"
-                  inverted={!fixed}
-                  primary={fixed}
-                  style={{ marginLeft: "0.5em" }}
-                >
-                  Sign Up
-                </Button>
+                {ContainerProps.loginInfo.isLoggedIn === false ? (
+                  <>
+                    <Button
+                      as="a"
+                      inverted
+                      onClick={() => {
+                        ContainerProps.setLogin({ isLoggedIn: true });
+                      }}
+                    >
+                      Log in
+                    </Button>
+                    <Button as="a" inverted>
+                      Sign Up
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button as="a" inverted>
+                      Create Question
+                    </Button>
+                    <Button
+                      as="a"
+                      inverted
+                      onClick={() => {
+                        ContainerProps.setLogin({ isLoggedIn: false });
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </>
+                )}
               </Menu.Item>
             </Container>
           </Menu>
+          <HomepageHeading mobile={false} />
         </Segment>
       </Visibility>
 
@@ -196,7 +248,9 @@ export const DesktopContainer: React.FC<ContainerProps> = (ContainerProps) => {
   );
 };
 
-export const MobileContainer: React.FC<ContainerProps> = (ContainerProps) => {
+export const MobileContainer: React.FC<DeviceContainerProps> = (
+  ContainerProps
+) => {
   const [state, setState] = useState({ sidebarOpened: false });
 
   const handleSidebarHide = () => setState({ sidebarOpened: false });
@@ -216,14 +270,32 @@ export const MobileContainer: React.FC<ContainerProps> = (ContainerProps) => {
           vertical
           visible={sidebarOpened}
         >
-          <Menu.Item as="a" active>
-            Home
-          </Menu.Item>
-          <Menu.Item as="a">Work</Menu.Item>
-          <Menu.Item as="a">Company</Menu.Item>
-          <Menu.Item as="a">Careers</Menu.Item>
-          <Menu.Item as="a">Log in</Menu.Item>
-          <Menu.Item as="a">Sign Up</Menu.Item>
+          <MenuItems items={menuItemsObj} active={0} />
+          {ContainerProps.loginInfo.isLoggedIn === false ? (
+            <>
+              <Menu.Item
+                as="a"
+                onClick={() => {
+                  ContainerProps.setLogin({ isLoggedIn: true });
+                }}
+              >
+                Log in
+              </Menu.Item>
+              <Menu.Item as="a">Sign Up</Menu.Item>
+            </>
+          ) : (
+            <>
+              <Menu.Item
+                as="a"
+                onClick={() => {
+                  ContainerProps.setLogin({ isLoggedIn: false });
+                }}
+              >
+                Logout
+              </Menu.Item>
+              <Menu.Item as="a">Create Question</Menu.Item>
+            </>
+          )}
         </Sidebar>
 
         <Sidebar.Pusher dimmed={sidebarOpened}>
@@ -239,12 +311,37 @@ export const MobileContainer: React.FC<ContainerProps> = (ContainerProps) => {
                   <Icon name="sidebar" />
                 </Menu.Item>
                 <Menu.Item position="right">
-                  <Button as="a" inverted>
-                    Log in
-                  </Button>
-                  <Button as="a" inverted style={{ marginLeft: "0.5em" }}>
-                    Sign Up
-                  </Button>
+                  {ContainerProps.loginInfo.isLoggedIn === false ? (
+                    <>
+                      <Button
+                        as="a"
+                        inverted
+                        onClick={() => {
+                          ContainerProps.setLogin({ isLoggedIn: true });
+                        }}
+                      >
+                        Log in
+                      </Button>
+                      <Button as="a" inverted>
+                        Sign Up
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button as="a" inverted>
+                        Create Question
+                      </Button>
+                      <Button
+                        as="a"
+                        inverted
+                        onClick={() => {
+                          ContainerProps.setLogin({ isLoggedIn: false });
+                        }}
+                      >
+                        Logout
+                      </Button>
+                    </>
+                  )}
                 </Menu.Item>
               </Menu>
             </Container>
@@ -259,143 +356,28 @@ export const MobileContainer: React.FC<ContainerProps> = (ContainerProps) => {
   );
 };
 
-const ResponsiveContainer: React.FC<ContainerProps> = (ContainerProps) => (
-  /* Heads up!
-   * For large applications it may not be best option to put all page into these containers at
-   * they will be rendered twice for SSR.
-   */
-  <MediaContextProvider>
-    <DesktopContainer>{ContainerProps.children}</DesktopContainer>
-    <MobileContainer>{ContainerProps.children}</MobileContainer>
-  </MediaContextProvider>
-);
+const ResponsiveContainer: React.FC<ContainerProps> = (ContainerProps) => {
+  const [loginInfo, setLogin] = useLoginContext();
+
+  return (
+    <MediaContextProvider>
+      <DesktopContainer loginInfo={loginInfo} setLogin={setLogin}>
+        {ContainerProps.children}
+      </DesktopContainer>
+      <MobileContainer loginInfo={loginInfo} setLogin={setLogin}>
+        {ContainerProps.children}
+      </MobileContainer>
+    </MediaContextProvider>
+  );
+};
 
 const HomepageLayout = () => (
-  <ResponsiveContainer>
-    <Segment style={{ padding: "8em 0em" }} vertical>
-      <Grid container stackable verticalAlign="middle">
-        <Grid.Row>
-          <Grid.Column width={8}>
-            <Header as="h3" style={{ fontSize: "2em" }}>
-              <Placeholder>
-                <Placeholder.Line />
-              </Placeholder>
-            </Header>
-            <p style={{ fontSize: "1.33em" }}>
-              <Placeholder>
-                <Placeholder.Line />
-                <Placeholder.Line />
-                <Placeholder.Line />
-              </Placeholder>
-            </p>
-            <Header as="h3" style={{ fontSize: "2em" }}>
-              <Placeholder>
-                <Placeholder.Line />
-              </Placeholder>
-            </Header>
-            <p style={{ fontSize: "1.33em" }}>
-              <Placeholder>
-                <Placeholder.Line />
-                <Placeholder.Line />
-              </Placeholder>
-            </p>
-          </Grid.Column>
-          <Grid.Column floated="right" width={6}>
-            <Placeholder>
-              <Placeholder.Image />
-            </Placeholder>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column textAlign="center">
-            <Button size="huge">Check Them Out</Button>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    </Segment>
-
-    <Segment style={{ padding: "0em" }} vertical>
-      <Grid celled="internally" columns="equal" stackable>
-        <Grid.Row textAlign="center">
-          <Grid.Column style={{ paddingBottom: "5em", paddingTop: "5em" }}>
-            <Header as="h3" style={{ fontSize: "2em" }}>
-              <Placeholder>
-                <Placeholder.Line />
-              </Placeholder>
-            </Header>
-            <p style={{ fontSize: "1.33em" }}>
-              <Placeholder>
-                <Placeholder.Line />
-              </Placeholder>
-            </p>
-          </Grid.Column>
-          <Grid.Column style={{ paddingBottom: "5em", paddingTop: "5em" }}>
-            <Header as="h3" style={{ fontSize: "2em" }}>
-              <Placeholder>
-                <Placeholder.Line />
-              </Placeholder>
-            </Header>
-            <p style={{ fontSize: "1.33em" }}>
-              <Placeholder>
-                <Placeholder.Image />
-                <Placeholder.Line />
-              </Placeholder>
-            </p>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    </Segment>
-
-    <Segment style={{ padding: "8em 0em" }} vertical>
-      <Container text>
-        <Header as="h3" style={{ fontSize: "2em" }}>
-          <Placeholder>
-            <Placeholder.Line />
-          </Placeholder>
-        </Header>
-        <p style={{ fontSize: "1.33em" }}>
-          <Placeholder>
-            <Placeholder.Line />
-            <Placeholder.Line />
-            <Placeholder.Line />
-            <Placeholder.Line />
-          </Placeholder>
-        </p>
-        <Button as="a" size="large">
-          <Placeholder>
-            <Placeholder.Line />
-          </Placeholder>
-        </Button>
-
-        <Divider
-          as="h4"
-          className="header"
-          horizontal
-          style={{ margin: "3em 0em", textTransform: "uppercase" }}
-        >
-          <a href="#">Case Studies</a>
-        </Divider>
-
-        <Header as="h3" style={{ fontSize: "2em" }}>
-          <Placeholder>
-            <Placeholder.Line />
-          </Placeholder>
-        </Header>
-        <p style={{ fontSize: "1.33em" }}>
-          <Placeholder>
-            <Placeholder.Line />
-            <Placeholder.Line />
-            <Placeholder.Line />
-          </Placeholder>
-        </p>
-        <Button as="a" size="large">
-          <Placeholder>
-            <Placeholder.Line />
-          </Placeholder>
-        </Button>
-      </Container>
-    </Segment>
-  </ResponsiveContainer>
+  <LoginProvider>
+    <ResponsiveContainer>
+      {switchRoutes}
+      <br />
+    </ResponsiveContainer>
+  </LoginProvider>
 );
 
 export default HomepageLayout;

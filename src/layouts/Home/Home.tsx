@@ -4,23 +4,6 @@ import routes from "../../routes";
 import HomeView from "../../views/Home/Home";
 import { Icon, Container, Header, Sidebar } from "semantic-ui-react";
 
-const switchRoutes = (
-  <Switch>
-    {routes.map((prop, key) => {
-      if (prop.layout + prop.path === "/") {
-        return <HomeView key={1} />;
-      }
-      return (
-        <Route
-          path={prop.layout + prop.path}
-          component={prop.component}
-          key={key}
-        />
-      );
-    })}
-  </Switch>
-);
-
 export default function Home() {
   return (
     <div>

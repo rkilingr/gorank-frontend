@@ -80,3 +80,28 @@ export const QuestionsProvider = ({
     </QuestionsContext.Provider>
   );
 };
+
+// Standard interface and functions
+export interface LoginInfo {
+  isLoggedIn: boolean;
+}
+
+// useState implementation
+export const useLogin = (initial: LoginInfo) =>
+  React.useState<LoginInfo>(initial);
+export type LoginType = ReturnType<typeof useLogin>[0];
+export type SetLoginType = ReturnType<typeof useLogin>[1];
+
+const LoginContext = React.createContext<ReturnType<typeof useLogin> | null>(
+  null
+);
+
+export const useLoginContext = () => React.useContext(LoginContext)!;
+
+export const LoginProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <LoginContext.Provider value={useLogin({ isLoggedIn: false })}>
+      {children}
+    </LoginContext.Provider>
+  );
+};
