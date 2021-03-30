@@ -1,25 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuestionsContext, addQuestion, Question } from "../../store";
 import QuestionEditor from "./CreateQuestion";
-import { Form, Icon } from "semantic-ui-react";
+import { Form, Icon, Accordion, Button } from "semantic-ui-react";
 
 const QuizEditor = () => {
+  const [activeIndex, setIndex] = useState(0);
   const [questionsCtx, setQuestions] = useQuestionsContext();
 
   return (
     <Form>
-      {/* <PanelGroup accordion defaultActiveKey={1} bordered>
+      <Accordion fluid styled>
         {questionsCtx.map((questionVal: Question, key: number) => {
           return (
-            <Panel key={key} header={questionVal.title} eventKey={key + 1}>
-              <QuestionEditor question={questionVal} />
-            </Panel>
+            <>
+              <Accordion.Title
+                active={activeIndex === key}
+                index={key}
+                onClick={() => setIndex(key)}
+              >
+                <Icon name="dropdown" />
+                {questionVal.title}
+              </Accordion.Title>
+              <Accordion.Content active={activeIndex === key}>
+                {JSON.stringify(questionVal)}
+              </Accordion.Content>
+            </>
           );
         })}
-      </PanelGroup>
+      </Accordion>
       <br />
-      <ButtonToolbar>
-        <IconButton
+      <Button.Group>
+        <Button
           icon={<Icon icon="plus-square" />}
           appearance="primary"
           onClick={() => {
@@ -28,24 +39,19 @@ const QuizEditor = () => {
           active
         >
           Add Question
-        </IconButton>
-        <IconButton
-          icon={<Icon icon="save" />}
-          appearance="primary"
-          onClick={() => Alert.success("Quiz Saved")}
-          active
-        >
+        </Button>
+        <Button icon={<Icon icon="save" />} appearance="primary" active>
           Submit
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
           icon={<Icon icon="ban" />}
           appearance="primary"
           color="red"
           active
         >
           Cancel
-        </IconButton>
-      </ButtonToolbar> */}
+        </Button>
+      </Button.Group>
     </Form>
   );
 };

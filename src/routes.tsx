@@ -1,5 +1,5 @@
 import About from "./views/About/About";
-import CreateQuestion from "./views/CreateQuestion/CreateQuestion";
+import CreateQuiz from "./views/CreateQuiz/CreateQuiz";
 import Home from "./layouts/Home/Home";
 
 const dashboardRoutes = [
@@ -14,7 +14,7 @@ const dashboardRoutes = [
     path: "createquestion",
     name: "Create Question",
     icon: null,
-    component: CreateQuestion,
+    component: CreateQuiz,
     layout: "/",
   },
   {

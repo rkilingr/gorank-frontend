@@ -2,7 +2,7 @@ import React from "react";
 import QuizEditor from "../../components/Quiz/CreateQuiz";
 import { QuestionsProvider } from "../../store";
 
-const CreateQuestion = () => {
+const CreateQuiz = () => {
   return (
     <div>
       <QuestionsProvider>
@@ -12,4 +12,4 @@ const CreateQuestion = () => {
   );
 };
 
-export default CreateQuestion;
+export default CreateQuiz;

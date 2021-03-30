@@ -55,50 +55,18 @@ const { MediaContextProvider, Media } = createMedia({
  * HomepageHeading uses inline styling, however it's not the best practice. Use CSS or styled
  * components for such things.
  */
-interface HomeProps {
-  mobile: boolean;
-}
-
-const HomepageHeading = (prop: HomeProps) => (
-  <Container text>
-    <Header
-      as="h1"
-      content={
-        <Placeholder>
-          <Placeholder.Line />
-        </Placeholder>
-      }
-      inverted
-      style={{
-        fontSize: prop.mobile ? "2em" : "4em",
-        fontWeight: "normal",
-        marginBottom: 0,
-        marginTop: prop.mobile ? "1.5em" : "3em",
-      }}
-    />
-    <Header
-      as="h2"
-      content={
-        <Placeholder>
-          <Placeholder.Line />
-        </Placeholder>
-      }
-      inverted
-      style={{
-        fontSize: prop.mobile ? "1.5em" : "1.7em",
-        fontWeight: "normal",
-        marginTop: prop.mobile ? "0.5em" : "1.5em",
-      }}
-    />
-    <Button primary size="huge">
-      Get Started
-      <Icon name="arrow right" />
-    </Button>
-  </Container>
-);
 
 const Footer = () => (
-  <Segment inverted vertical style={{ padding: "5em 0em" }}>
+  <Segment
+    inverted
+    vertical
+    style={{
+      padding: "5em 0em",
+      position: "fixed",
+      bottom: 0,
+      width: "100%",
+    }}
+  >
     <Container>
       <Grid divided inverted stackable>
         <Grid.Row>
@@ -221,9 +189,11 @@ export const DesktopContainer: React.FC<DeviceContainerProps> = (
                   </>
                 ) : (
                   <>
-                    <Button as="a" inverted>
-                      Create Question
-                    </Button>
+                    <Link to="/createquestion">
+                      <Button as="a" inverted>
+                        Create Question
+                      </Button>
+                    </Link>
                     <Button
                       as="a"
                       inverted
@@ -238,7 +208,6 @@ export const DesktopContainer: React.FC<DeviceContainerProps> = (
               </Menu.Item>
             </Container>
           </Menu>
-          <HomepageHeading mobile={false} />
         </Segment>
       </Visibility>
 
@@ -345,7 +314,6 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
                 </Menu.Item>
               </Menu>
             </Container>
-            <HomepageHeading mobile />
           </Segment>
 
           {ContainerProps.children}

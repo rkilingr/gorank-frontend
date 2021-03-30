@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Container,
@@ -7,11 +7,70 @@ import {
   Header,
   Segment,
   Placeholder,
+  Icon,
 } from "semantic-ui-react";
+interface HomeProps {
+  mobile: boolean;
+}
+
+const HomepageHeading = (prop: HomeProps) => (
+  <Container text>
+    <Header
+      as="h1"
+      content={
+        <Placeholder>
+          <Placeholder.Line />
+        </Placeholder>
+      }
+      inverted
+      style={{
+        fontSize: prop.mobile ? "2em" : "4em",
+        fontWeight: "normal",
+        marginBottom: 0,
+        marginTop: prop.mobile ? "1.5em" : "3em",
+      }}
+    />
+    <Header
+      as="h2"
+      content={
+        <Placeholder>
+          <Placeholder.Line />
+        </Placeholder>
+      }
+      inverted
+      style={{
+        fontSize: prop.mobile ? "1.5em" : "1.7em",
+        fontWeight: "normal",
+        marginTop: prop.mobile ? "0.5em" : "1.5em",
+      }}
+    />
+    <Button primary size="huge">
+      Get Started
+      <Icon name="arrow right" />
+    </Button>
+  </Container>
+);
 
 export default function Home() {
+  const [width, setWidth] = useState<number>(window.innerWidth);
+  const handleWindowSizeChange = () => {
+    setWidth(window.innerWidth);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowSizeChange);
+    return () => {
+      window.removeEventListener("resize", handleWindowSizeChange);
+    };
+  }, []);
+
+  const isMobile: boolean = width <= 768;
+
   return (
     <>
+      <Segment inverted textAlign="center" vertical>
+        <HomepageHeading mobile={isMobile} />
+      </Segment>
       <Segment style={{ padding: "8em 0em" }} vertical>
         <Grid container stackable verticalAlign="middle">
           <Grid.Row>
