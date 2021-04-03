@@ -7,12 +7,6 @@ import { Switch, Route, Link } from "react-router-dom";
 import routes from "../../routes";
 import HomeView from "../../views/Home/Home";
 import {
-  LoginProvider,
-  useLoginContext,
-  SetLoginType,
-  LoginInfo,
-} from "../../store";
-import {
   Button,
   Container,
   Grid,
@@ -25,23 +19,37 @@ import {
   Visibility,
   Placeholder,
 } from "semantic-ui-react";
+import useAuth from "../../auth/useAuth";
+import { PrivateRoute } from "../../auth/PrivateRoute";
 
-const switchRoutes = (
-  <Switch>
-    {routes.map((prop, key) => {
-      if (prop.layout + prop.path === "/") {
-        return <HomeView key={1} />;
-      }
-      return (
-        <Route
-          path={prop.layout + prop.path}
-          component={prop.component}
-          key={key}
-        />
-      );
-    })}
-  </Switch>
-);
+const SwitchRoutes: React.FC = () => {
+  return (
+    <Switch>
+      {routes.map((prop, key) => {
+        if (prop.layout + prop.path === "/") {
+          return <HomeView key={key} />;
+        }
+
+        if (prop.isAuthed === true) {
+          return (
+            <PrivateRoute
+              key={key}
+              path={prop.layout + prop.path}
+              component={prop.component}
+            />
+          );
+        }
+        return (
+          <Route
+            key={key}
+            path={prop.layout + prop.path}
+            component={prop.component}
+          />
+        );
+      })}
+    </Switch>
+  );
+};
 
 const { MediaContextProvider, Media } = createMedia({
   breakpoints: {
@@ -94,12 +102,10 @@ const Footer = () => (
                 <Placeholder.Line />
               </Placeholder>
             </Header>
-            <p>
-              <Placeholder>
-                <Placeholder.Line />
-                <Placeholder.Line />
-              </Placeholder>
-            </p>
+            <Placeholder>
+              <Placeholder.Line />
+              <Placeholder.Line />
+            </Placeholder>
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -140,8 +146,7 @@ interface ContainerProps {
 
 interface DeviceContainerProps {
   children: React.ReactElement[];
-  setLogin: SetLoginType;
-  loginInfo: LoginInfo;
+  setLogin: ReturnType<typeof useAuth>;
 }
 
 export const DesktopContainer: React.FC<DeviceContainerProps> = (
@@ -172,13 +177,15 @@ export const DesktopContainer: React.FC<DeviceContainerProps> = (
             <Container>
               <MenuItems items={menuItemsObj} active={0} />
               <Menu.Item position="right">
-                {ContainerProps.loginInfo.isLoggedIn === false ? (
+                {ContainerProps.setLogin?.loginInfo.isLoggedIn === false ? (
                   <>
                     <Button
                       as="a"
                       inverted
                       onClick={() => {
-                        ContainerProps.setLogin({ isLoggedIn: true });
+                        ContainerProps.setLogin?.signIn(() => {
+                          //
+                        });
                       }}
                     >
                       Log in
@@ -198,7 +205,9 @@ export const DesktopContainer: React.FC<DeviceContainerProps> = (
                       as="a"
                       inverted
                       onClick={() => {
-                        ContainerProps.setLogin({ isLoggedIn: false });
+                        ContainerProps.setLogin?.signOut(() => {
+                          //
+                        });
                       }}
                     >
                       Logout
@@ -240,12 +249,14 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
           visible={sidebarOpened}
         >
           <MenuItems items={menuItemsObj} active={0} />
-          {ContainerProps.loginInfo.isLoggedIn === false ? (
+          {ContainerProps.setLogin?.loginInfo.isLoggedIn === false ? (
             <>
               <Menu.Item
                 as="a"
                 onClick={() => {
-                  ContainerProps.setLogin({ isLoggedIn: true });
+                  ContainerProps.setLogin?.signIn(() => {
+                    //
+                  });
                 }}
               >
                 Log in
@@ -257,7 +268,9 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
               <Menu.Item
                 as="a"
                 onClick={() => {
-                  ContainerProps.setLogin({ isLoggedIn: false });
+                  ContainerProps.setLogin?.signOut(() => {
+                    //
+                  });
                 }}
               >
                 Logout
@@ -280,13 +293,15 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
                   <Icon name="sidebar" />
                 </Menu.Item>
                 <Menu.Item position="right">
-                  {ContainerProps.loginInfo.isLoggedIn === false ? (
+                  {ContainerProps.setLogin?.loginInfo.isLoggedIn === false ? (
                     <>
                       <Button
                         as="a"
                         inverted
                         onClick={() => {
-                          ContainerProps.setLogin({ isLoggedIn: true });
+                          ContainerProps.setLogin?.signIn(() => {
+                            //
+                          });
                         }}
                       >
                         Log in
@@ -304,7 +319,9 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
                         as="a"
                         inverted
                         onClick={() => {
-                          ContainerProps.setLogin({ isLoggedIn: false });
+                          ContainerProps.setLogin?.signOut(() => {
+                            //
+                          });
                         }}
                       >
                         Logout
@@ -325,14 +342,14 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
 };
 
 const ResponsiveContainer: React.FC<ContainerProps> = (ContainerProps) => {
-  const [loginInfo, setLogin] = useLoginContext();
+  const setLogin = useAuth();
 
   return (
     <MediaContextProvider>
-      <DesktopContainer loginInfo={loginInfo} setLogin={setLogin}>
+      <DesktopContainer setLogin={setLogin}>
         {ContainerProps.children}
       </DesktopContainer>
-      <MobileContainer loginInfo={loginInfo} setLogin={setLogin}>
+      <MobileContainer setLogin={setLogin}>
         {ContainerProps.children}
       </MobileContainer>
     </MediaContextProvider>
@@ -340,12 +357,10 @@ const ResponsiveContainer: React.FC<ContainerProps> = (ContainerProps) => {
 };
 
 const HomepageLayout = () => (
-  <LoginProvider>
-    <ResponsiveContainer>
-      {switchRoutes}
-      <br />
-    </ResponsiveContainer>
-  </LoginProvider>
+  <ResponsiveContainer>
+    <SwitchRoutes />
+    <br />
+  </ResponsiveContainer>
 );
 
 export default HomepageLayout;

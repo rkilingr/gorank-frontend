@@ -22,7 +22,7 @@ const QuizEditor = () => {
                 {questionVal.title}
               </Accordion.Title>
               <Accordion.Content active={activeIndex === key}>
-                {JSON.stringify(questionVal)}
+                <QuestionEditor question={questionVal} />
               </Accordion.Content>
             </>
           );
