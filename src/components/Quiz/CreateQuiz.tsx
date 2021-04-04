@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { useQuestionsContext, addQuestion, Question } from "../../store";
+import {
+  useQuestionsContext,
+  addQuestion,
+  Question,
+  postQuestion,
+} from "../../store";
 import QuestionEditor from "./CreateQuestion";
 import { Form, Icon, Accordion, Button } from "semantic-ui-react";
 
@@ -19,7 +24,7 @@ const QuizEditor = () => {
                 onClick={() => setIndex(key)}
               >
                 <Icon name="dropdown" />
-                {questionVal.title}
+                {questionVal.title === "" ? "Question" : questionVal.title}
               </Accordion.Title>
               <Accordion.Content active={activeIndex === key}>
                 <QuestionEditor question={questionVal} />
@@ -40,7 +45,15 @@ const QuizEditor = () => {
         >
           Add Question
         </Button>
-        <Button icon={<Icon icon="save" />} appearance="primary" active>
+        <Button
+          icon={<Icon icon="save" />}
+          onClick={async () => {
+            await postQuestion(questionsCtx);
+            setQuestions([]);
+          }}
+          appearance="primary"
+          active
+        >
           Submit
         </Button>
         <Button

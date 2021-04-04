@@ -3,53 +3,20 @@
 
 import { createMedia } from "@artsy/fresnel";
 import React, { useState } from "react";
-import { Switch, Route, Link } from "react-router-dom";
-import routes from "../../routes";
-import HomeView from "../../views/Home/Home";
+import { Link, useLocation } from "react-router-dom";
 import {
   Button,
   Container,
-  Grid,
-  Header,
   Icon,
-  List,
   Menu,
   Segment,
   Sidebar,
   Visibility,
-  Placeholder,
 } from "semantic-ui-react";
 import useAuth from "../../auth/useAuth";
-import { PrivateRoute } from "../../auth/PrivateRoute";
-
-const SwitchRoutes: React.FC = () => {
-  return (
-    <Switch>
-      {routes.map((prop, key) => {
-        if (prop.layout + prop.path === "/") {
-          return <HomeView key={key} />;
-        }
-
-        if (prop.isAuthed === true) {
-          return (
-            <PrivateRoute
-              key={key}
-              path={prop.layout + prop.path}
-              component={prop.component}
-            />
-          );
-        }
-        return (
-          <Route
-            key={key}
-            path={prop.layout + prop.path}
-            component={prop.component}
-          />
-        );
-      })}
-    </Switch>
-  );
-};
+import SwitchRoutes from "./Routes";
+import Footer from "./Footer";
+import { QuestionsProvider } from "../../store";
 
 const { MediaContextProvider, Media } = createMedia({
   breakpoints: {
@@ -64,69 +31,20 @@ const { MediaContextProvider, Media } = createMedia({
  * components for such things.
  */
 
-const Footer = () => (
-  <Segment
-    inverted
-    vertical
-    style={{
-      padding: "5em 0em",
-      position: "fixed",
-      bottom: 0,
-      width: "100%",
-    }}
-  >
-    <Container>
-      <Grid divided inverted stackable>
-        <Grid.Row>
-          <Grid.Column width={3}>
-            <Header inverted as="h4" content="About" />
-            <List link inverted>
-              <List.Item as="a">Sitemap</List.Item>
-              <List.Item as="a">Contact Us</List.Item>
-              <List.Item as="a">Religious Ceremonies</List.Item>
-              <List.Item as="a">Gazebo Plans</List.Item>
-            </List>
-          </Grid.Column>
-          <Grid.Column width={3}>
-            <Header inverted as="h4" content="Services" />
-            <List link inverted>
-              <List.Item as="a">Banana Pre-Order</List.Item>
-              <List.Item as="a">DNA FAQ</List.Item>
-              <List.Item as="a">How To Access</List.Item>
-              <List.Item as="a">Favorite X-Men</List.Item>
-            </List>
-          </Grid.Column>
-          <Grid.Column width={7}>
-            <Header as="h4" inverted>
-              <Placeholder>
-                <Placeholder.Line />
-              </Placeholder>
-            </Header>
-            <Placeholder>
-              <Placeholder.Line />
-              <Placeholder.Line />
-            </Placeholder>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    </Container>
-  </Segment>
-);
-
 const menuItemsObj: { [name: string]: string } = { Home: "/", About: "/about" };
 
 interface menuProps {
   items: typeof menuItemsObj;
-  active: number;
 }
 
 const MenuItems: React.FC<menuProps> = (props: menuProps) => {
+  const location = useLocation();
   return (
     <>
       {Object.keys(props.items).map((val, index) => {
         return (
           <Link key={index} to={props.items[val]}>
-            {index === props.active ? (
+            {props.items[val] === location.pathname ? (
               <Menu.Item as="a" active>
                 {val}
               </Menu.Item>
@@ -175,13 +93,13 @@ export const DesktopContainer: React.FC<DeviceContainerProps> = (
             size="large"
           >
             <Container>
-              <MenuItems items={menuItemsObj} active={0} />
+              <MenuItems items={menuItemsObj} />
               <Menu.Item position="right">
                 {ContainerProps.setLogin?.loginInfo.isLoggedIn === false ? (
                   <>
                     <Button
                       as="a"
-                      inverted
+                      inverted={!fixed}
                       onClick={() => {
                         ContainerProps.setLogin?.signIn(() => {
                           //
@@ -190,20 +108,20 @@ export const DesktopContainer: React.FC<DeviceContainerProps> = (
                     >
                       Log in
                     </Button>
-                    <Button as="a" inverted>
+                    <Button as="a" inverted={!fixed}>
                       Sign Up
                     </Button>
                   </>
                 ) : (
                   <>
                     <Link to="/createquestion">
-                      <Button as="a" inverted>
+                      <Button as="a" inverted={!fixed}>
                         Create Question
                       </Button>
                     </Link>
                     <Button
                       as="a"
-                      inverted
+                      inverted={!fixed}
                       onClick={() => {
                         ContainerProps.setLogin?.signOut(() => {
                           //
@@ -248,7 +166,7 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
           vertical
           visible={sidebarOpened}
         >
-          <MenuItems items={menuItemsObj} active={0} />
+          <MenuItems items={menuItemsObj} />
           {ContainerProps.setLogin?.loginInfo.isLoggedIn === false ? (
             <>
               <Menu.Item
@@ -312,9 +230,11 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
                     </>
                   ) : (
                     <>
-                      <Button as="a" inverted>
-                        Create Question
-                      </Button>
+                      <Link to="/createquestion">
+                        <Button as="a" inverted>
+                          Create Question
+                        </Button>
+                      </Link>
                       <Button
                         as="a"
                         inverted
@@ -345,14 +265,16 @@ const ResponsiveContainer: React.FC<ContainerProps> = (ContainerProps) => {
   const setLogin = useAuth();
 
   return (
-    <MediaContextProvider>
-      <DesktopContainer setLogin={setLogin}>
-        {ContainerProps.children}
-      </DesktopContainer>
-      <MobileContainer setLogin={setLogin}>
-        {ContainerProps.children}
-      </MobileContainer>
-    </MediaContextProvider>
+    <QuestionsProvider>
+      <MediaContextProvider>
+        <DesktopContainer setLogin={setLogin}>
+          {ContainerProps.children}
+        </DesktopContainer>
+        <MobileContainer setLogin={setLogin}>
+          {ContainerProps.children}
+        </MobileContainer>
+      </MediaContextProvider>
+    </QuestionsProvider>
   );
 };
 

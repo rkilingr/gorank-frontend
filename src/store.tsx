@@ -1,8 +1,12 @@
+import axios from "axios";
 import * as React from "react";
 
 // Standard interface and functions
-export interface Question {
+export interface Question extends reqQuestion {
   id: number;
+}
+
+interface reqQuestion {
   title: string;
   description?: string;
   choices: { [name: string]: string };
@@ -16,12 +20,7 @@ export const updateQuestion = (
 ): Question[] =>
   questions.map((question) => ({
     ...question,
-    title:
-      question.id === id
-        ? newQuestion.title === ""
-          ? "Question"
-          : newQuestion.title
-        : question.title,
+    title: question.id === id ? newQuestion.title : question.title,
     description:
       question.id === id
         ? newQuestion.description === ""
@@ -45,10 +44,10 @@ export const updateQuestion = (
 export const removeQuestion = (questions: Question[], id: number): Question[] =>
   questions.filter((todo) => todo.id !== id);
 
-export const addQuestion = (todos: Question[]): Question[] => [
-  ...todos,
+export const addQuestion = (questions: Question[]): Question[] => [
+  ...questions,
   {
-    id: Math.max(0, Math.max(...todos.map(({ id }) => id))) + 1,
+    id: Math.max(0, Math.max(...questions.map(({ id }) => id))) + 1,
     title: "Question",
     choices: {
       A: "",
@@ -56,6 +55,25 @@ export const addQuestion = (todos: Question[]): Question[] => [
     answer: "A",
   },
 ];
+
+export const postQuestion = async (questions: Question[]) => {
+  const backendURL =
+    process.env.REACT_APP_BACKEND_URL === undefined
+      ? "http://localhost:8000/"
+      : process.env.REACT_APP_BACKEND_URL;
+
+  const req: reqQuestion[] = [];
+
+  questions.forEach((element) => {
+    const q = Object(element);
+
+    delete q.id;
+
+    req.push(q);
+  });
+
+  return axios.post(`${backendURL}v1/quiz`, { questionSet: req });
+};
 
 // useState implementation
 export const useQuestions = (initial: Question[]) =>

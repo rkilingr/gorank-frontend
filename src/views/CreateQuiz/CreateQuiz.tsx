@@ -5,9 +5,7 @@ import { QuestionsProvider } from "../../store";
 const CreateQuiz = () => {
   return (
     <div>
-      <QuestionsProvider>
-        <QuizEditor />
-      </QuestionsProvider>
+      <QuizEditor />
     </div>
   );
 };

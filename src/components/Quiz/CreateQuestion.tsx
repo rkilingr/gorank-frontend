@@ -48,7 +48,6 @@ const QuestionEditor: React.FC<props> = (q: props) => {
       <Form.Group>
         <Editor
           defaultValue="Hello world!"
-          value={q.question.description}
           onChange={(value: () => string) => {
             const f = async () => {
               const newQ = q.question;
@@ -145,7 +144,20 @@ const QuestionEditor: React.FC<props> = (q: props) => {
                         content={q.question.choices[key]}
                       >
                         <Label color="green">{key + ": "}</Label>
-                        <Input></Input>
+                        <Input
+                          onChange={(e) => {
+                            const f = async () => {
+                              const newQ = q.question;
+                              newQ.choices[key] = e.target.value;
+                              await Promise.resolve(
+                                setQuestions((q1) =>
+                                  updateQuestion(q1, q.question.id, newQ)
+                                )
+                              );
+                            };
+                            void f();
+                          }}
+                        ></Input>
                       </Form.Input>
                       <br />
                     </Grid.Row>
@@ -160,20 +172,17 @@ const QuestionEditor: React.FC<props> = (q: props) => {
         </Form.Group>
       </Grid>
       <Form.Group>
-        <Form.Input
-          placeholder="Answer"
+        <Form.Dropdown
           label="Answer"
-          content={q.question.answer}
-          onChange={(e) => {
-            const f = async () => {
-              const newQ = q.question;
-              newQ.answer = e.target.value;
-              await Promise.resolve(
-                setQuestions((q1) => updateQuestion(q1, q.question.id, newQ))
-              );
+          placeholder="Select Answer"
+          selection
+          options={Object.keys(q.question.choices).map((mapKey) => {
+            return {
+              key: mapKey,
+              text: q.question.choices[mapKey],
+              value: mapKey,
             };
-            void f();
-          }}
+          })}
         />
         <br />
         <br />
