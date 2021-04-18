@@ -23,7 +23,8 @@
   "scripts": {
     "start": "chmod +x ./scripts/env.sh && ./scripts/env.sh && cp env-config.js ./public/ && BROWSER=none react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "lint": "eslint",
+    "test": "react-scripts test --watchAll=false --passWithNoTests",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
