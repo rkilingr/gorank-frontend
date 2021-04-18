@@ -15,7 +15,6 @@ COPY ./nginx/conf /etc/nginx
 
 WORKDIR /usr/share/nginx/html
 COPY ./scripts/env.sh .
-COPY .env .
 # Add bash
 RUN apk add --no-cache bash
 # Make env shell script executable

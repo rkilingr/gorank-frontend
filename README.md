@@ -1,4 +1,7 @@
 # gorank-frontend
+[![Build Status](https://github.com/rkilingr/gorank-frontend/actions/workflows/workflow.yml/badge.svg)](https://github.com/rkilingr/gorank-frontend)
+[![codecov](https://codecov.io/gh/rkilingr/gorank-frontend/branch/master/graph/badge.svg)](https://codecov.io/gh/rkilingr/gorank-frontend)
+[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/rkilingr/gorank-frontend/master/LICENSE)
 
 ## Available Scripts
 
