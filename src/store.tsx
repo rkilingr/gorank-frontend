@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as React from "react";
+import config from "./config/config";
 
 // Standard interface and functions
 export interface Question extends reqQuestion {
@@ -57,11 +58,6 @@ export const addQuestion = (questions: Question[]): Question[] => [
 ];
 
 export const postQuestion = async (questions: Question[]) => {
-  const backendURL =
-    process.env.REACT_APP_BACKEND_URL === undefined
-      ? "http://localhost:8000/"
-      : process.env.REACT_APP_BACKEND_URL;
-
   const req: reqQuestion[] = [];
 
   questions.forEach((element) => {
@@ -72,7 +68,7 @@ export const postQuestion = async (questions: Question[]) => {
     req.push(q);
   });
 
-  return axios.post(`${backendURL}v1/quiz`, { questionSet: req });
+  return axios.post(`${config.API_URL}v1/quiz`, { questionSet: req });
 };
 
 // useState implementation

@@ -105,3 +105,6 @@ dist
 
 # VSCode Configuration
 .vscode
+
+# Live env Config script
+env-config.js
