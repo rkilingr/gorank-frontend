@@ -114,9 +114,9 @@ export const DesktopContainer: React.FC<DeviceContainerProps> = (
                   </>
                 ) : (
                   <>
-                    <Link to="/createquestion">
+                    <Link to="/dashboard">
                       <Button as="a" inverted={!fixed}>
-                        Create Question
+                        Dashboard
                       </Button>
                     </Link>
                     <Button
@@ -230,9 +230,9 @@ export const MobileContainer: React.FC<DeviceContainerProps> = (
                     </>
                   ) : (
                     <>
-                      <Link to="/createquestion">
+                      <Link to="/dashboard">
                         <Button as="a" inverted>
-                          Create Question
+                          Dashboard
                         </Button>
                       </Link>
                       <Button
